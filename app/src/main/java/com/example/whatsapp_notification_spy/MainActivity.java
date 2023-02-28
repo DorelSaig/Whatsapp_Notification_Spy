@@ -1,8 +1,7 @@
 package com.example.whatsapp_notification_spy;
 
-import static android.provider.Settings.ACTION_NOTIFICATION_LISTENER_SETTINGS;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -12,29 +11,30 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.widget.ListView;
-import android.widget.TextView;
+import android.view.MenuItem;
 
 import com.example.whatsapp_notification_spy.services.NotificationListener;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.gson.Gson;
 
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Comparator;
 
 public class MainActivity extends AppCompatActivity {
 
     private RecyclerView main_LST_msgs;
+    private MyDB myDB;
     private ArrayList<MyMessage> listsArrayList;
     private Message_Adapter message_adapter;
+
+    private MaterialToolbar panel_Toolbar_Top;
+
 
 
     private BroadcastReceiver myBRD = new BroadcastReceiver() {
@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
                 //last_msg.setText("Sender: " + sender + " Message: " + message);
                 MyMessage myMessage = new MyMessage(sender, message, time);
                 listsArrayList.add(myMessage);
+                saveToSP(myMessage);
                 listsArrayList.sort(Comparator.comparing(MyMessage::getContact_name));
                 message_adapter.notifyDataSetChanged();
             }
@@ -59,7 +60,17 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    private void saveToSP(MyMessage message) {
+        String js = MSPV3.getMe().getString("MY_DB", "");
+        myDB = new Gson().fromJson(js, MyDB.class);
 
+        myDB.getMessages().add(message);
+
+//        Collections.sort(myDB.getRecords(), new SortByScore());
+
+        String json = new Gson().toJson(myDB);
+        MSPV3.getMe().putString("MY_DB", json);
+    }
 
 
     @Override
@@ -76,9 +87,12 @@ public class MainActivity extends AppCompatActivity {
                     "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS"));
         }
 
-        //last_msg = findViewById(R.id.last_msg);
-        main_LST_msgs = findViewById(R.id.main_LST_msgs);
-        listsArrayList = new ArrayList<>();
+        findViews();
+        initButton();
+
+        String js = MSPV3.getMe().getString("MY_DB", "");
+        myDB = new Gson().fromJson(js, MyDB.class);
+        listsArrayList = new ArrayList<>(myDB.getMessages());
         message_adapter = new Message_Adapter(this, listsArrayList);
 
         main_LST_msgs.setLayoutManager(new GridLayoutManager(this, 1));
@@ -96,6 +110,36 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void initButton() {
+        panel_Toolbar_Top.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                removeAllMessages();
+                return false;
+            }
+        });
+    }
+
+    private void removeAllMessages() {
+        String js = MSPV3.getMe().getString("MY_DB", "");
+        myDB = new Gson().fromJson(js, MyDB.class);
+
+        myDB.getMessages().clear();
+        listsArrayList.clear();
+        message_adapter.notifyDataSetChanged();
+
+
+//        Collections.sort(myDB.getRecords(), new SortByScore());
+
+        String json = new Gson().toJson(myDB);
+        MSPV3.getMe().putString("MY_DB", json);
+    }
+
+    private void findViews() {
+        main_LST_msgs = findViewById(R.id.main_LST_msgs);
+        panel_Toolbar_Top = findViewById(R.id.panel_Toolbar_Top);
     }
 
     @Override

@@ -45,29 +45,29 @@ public class NotificationListener extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn) {
         if (!sbn.getPackageName().equals(WA_PACKAGE)) return;
-
-        Notification notification = sbn.getNotification();
-        int id = 0;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-            id = sbn.getUid();
-        }
-
-        Bundle bundle = notification.extras;
-
-        String from = bundle.getString(NotificationCompat.EXTRA_TITLE);
-        String contant = bundle.getString(Objects.requireNonNull(NotificationCompat.getContentInfo(notification)).toString());
-        String message = bundle.getString(NotificationCompat.EXTRA_TEXT);
-
-        if(message.contains("messages from")){
-
-        }else {
-            Log.i(TAG, "From: " + from);
-            Log.i(TAG, "Contant: " + contant);
-            Log.i(TAG, "Message: " + message);
-            Log.i(TAG, "Notification ID" + id);
-
-
-        }
+//
+//        Notification notification = sbn.getNotification();
+//        int id = 0;
+//        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+//            id = sbn.getUid();
+//        }
+//
+//        Bundle bundle = notification.extras;
+//
+//        String from = bundle.getString(NotificationCompat.EXTRA_TITLE);
+//        String contant = bundle.getString(Objects.requireNonNull(NotificationCompat.getContentInfo(notification)).toString());
+//        String message = bundle.getString(NotificationCompat.EXTRA_TEXT);
+//
+//        if(message.contains("messages from")){
+//
+//        }else {
+//            Log.i(TAG, "From: " + from);
+//            Log.i(TAG, "Contant: " + contant);
+//            Log.i(TAG, "Message: " + message);
+//            Log.i(TAG, "Notification ID" + id);
+//
+//
+//        }
 
 //        Intent intent = new Intent(RADIO_STAION);
 //        intent.putExtra("sender", from);
