@@ -54,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
                 listsArrayList.add(myMessage);
                 saveToSP(myMessage);
                 listsArrayList.sort(Comparator.comparing(MyMessage::getContact_name));
-                message_adapter.notifyDataSetChanged();
+                message_adapter.notifyItemInserted(listsArrayList.size());
             }
 
         }
@@ -81,6 +81,9 @@ public class MainActivity extends AppCompatActivity {
         if (Settings.Secure.getString(this.getContentResolver(),"enabled_notification_listeners").contains(getApplicationContext().getPackageName()))
         {
             //service is enabled do something
+            IntentFilter intentFilter = new IntentFilter(NotificationListener.NOTIFICATION_SERVICE);
+            LocalBroadcastManager.getInstance(this).registerReceiver(myBRD, new IntentFilter(NotificationListener.RADIO_STAION));
+
         } else {
             //service is not enabled try to enabled by calling...
             startActivity(new Intent(
@@ -145,13 +148,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        IntentFilter intentFilter = new IntentFilter(NotificationListener.NOTIFICATION_SERVICE);
-        LocalBroadcastManager.getInstance(this).registerReceiver(myBRD, new IntentFilter(NotificationListener.RADIO_STAION));
+
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onDestroy() {
+        super.onDestroy();
         LocalBroadcastManager.getInstance(this).unregisterReceiver(myBRD);
 
     }

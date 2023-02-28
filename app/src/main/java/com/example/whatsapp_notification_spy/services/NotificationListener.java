@@ -28,6 +28,8 @@ public class NotificationListener extends NotificationListenerService {
     private static final String TAG1 = "ptttt";
     private static final String WA_PACKAGE = "com.whatsapp";
 
+    private String lastMassege = "";
+
     Context context;
 
     @Override
@@ -40,6 +42,12 @@ public class NotificationListener extends NotificationListenerService {
     @Override
     public void onListenerConnected() {
         Log.i(TAG, "Notification Listener connected");
+    }
+
+    @Override
+    public void onListenerDisconnected() {
+        super.onListenerDisconnected();
+        Log.i(TAG, "Notification Listener Disconnected");
     }
 
     @Override
@@ -95,6 +103,7 @@ public class NotificationListener extends NotificationListenerService {
             Log.i(TAG1, "Deleted From: " + from);
             Log.i(TAG1, "Deleted Message: " + message);
             Log.i(TAG1, "Notification ID" + id);
+
 
             SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
             String sTime = formatter.format(new Date(time));
