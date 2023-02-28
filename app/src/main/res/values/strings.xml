@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Whatsapp_Notification_Spy</string>
+    <string name="notification_listener_service" />
+</resources>
